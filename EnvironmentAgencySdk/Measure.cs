@@ -9,5 +9,4 @@
         public string Qualifier { get; set; }
         public string UnitName { get; set; }
     }
-
 }

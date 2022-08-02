@@ -54,6 +54,19 @@ namespace Gradient.EnvironmentAgencySdk.Test
         }
 
         [DataTestMethod]
+        [DataRow("xxxx", 0)]
+        [DataRow("Homing", 1)]
+        public async Task TestGetStationsBySearch(string search, int expected)
+        {
+            var ea = new Sdk();
+            var stations = await ea.GetStations(search: search);
+            Assert.IsNotNull(stations);
+            Assert.AreEqual(expected, stations.Count);
+            if (expected > 0)
+                Assert.IsTrue(stations[0].Label.Contains(search));
+        }
+
+        [DataTestMethod]
         [DataRow("0")]
         [DataRow("52203")]
         public async Task TestGetStation_Ok(string stationReference)
@@ -73,5 +86,20 @@ namespace Gradient.EnvironmentAgencySdk.Test
             await Assert.ThrowsExceptionAsync<HttpRequestException>(() => ea.GetStation(stationReference));
         }
 
+        [DataTestMethod]
+        [DataRow(DataType.All)]
+        [DataRow(DataType.Rainfall)]
+        [DataRow(DataType.Flow)]
+        [DataRow(DataType.Level)]
+        public async Task TestGetMeasurements(DataType dataType)
+        {
+            var ea = new Sdk();
+            var measurements = await ea.GetMeasurements("E7050", dataType: dataType);
+            Assert.IsNotNull(measurements);
+            if (dataType != DataType.Flow)
+            {
+                Assert.IsTrue(measurements.Count > 0);
+            }
+        }
     }
 }

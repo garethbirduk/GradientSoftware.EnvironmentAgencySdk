@@ -5,6 +5,13 @@ using System.Threading.Tasks;
 
 namespace Gradient.EnvironmentAgencySdk
 {
+    public enum DataType
+    {
+        Rainfall,
+        Level,
+        Flow,
+        All
+    }
 
     public class Sdk
     {
@@ -31,9 +38,10 @@ namespace Gradient.EnvironmentAgencySdk
             int distance = 0
             )
         {
-            var url = $"{FloodMonitoring}/stations";
+            var url = $"{FloodMonitoring}stations";
             var parameters = new List<string>();
             if (!string.IsNullOrWhiteSpace(label)) parameters.Add($"label={label}");
+            if (!string.IsNullOrWhiteSpace(search)) parameters.Add($"search={search}");
             if (!string.IsNullOrWhiteSpace(stationReference)) parameters.Add($"stationReference={stationReference}");
             if (!string.IsNullOrWhiteSpace(RLOIid)) parameters.Add($"RLOIid={RLOIid}");
             if (!string.IsNullOrWhiteSpace(label)) parameters.Add($"search={search}");
@@ -48,6 +56,26 @@ namespace Gradient.EnvironmentAgencySdk
             url = $"{url}?{string.Join("&", parameters)}";
             var json = await Get(url);
             return JsonHelpers.CreateFromJsonString<EnvironmentAgencyList<Stations>>(json).Items;
+        }
+
+        public async Task<List<Measurement>> GetMeasurements(
+            string stationReference,
+            DataType dataType = DataType.All
+        )
+        {
+            var url = $"{FloodMonitoring}measures";
+
+            var parameters = new List<string>()
+            {
+                $"stationReference={stationReference}"
+            };
+
+            if (dataType != DataType.All)
+                parameters.Add($"parameter={dataType.ToString().ToLowerInvariant()}");
+
+            url = $"{url}?{string.Join("&", parameters)}";
+            var json = await Get(url);
+            return JsonHelpers.CreateFromJsonString<EnvironmentAgencyList<Measurement>>(json).Items;
         }
 
         private async Task<string> Get(string fullUrl)
