@@ -11,10 +11,10 @@ namespace Gradient.EnvironmentAgencySdk
         public string DateOpened { get; set; }
         public int Easting { get; set; }
         public string Label { get; set; }
-        public double  Lat { get; set; }
+        public double Lat { get; set; }
 
         [JsonProperty("_long")]
-        public double  Long { get; set; }
+        public double Long { get; set; }
         public int Northing { get; set; }
         public string Notation { get; set; }
         public string RiverName { get; set; }
